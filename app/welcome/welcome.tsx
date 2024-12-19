@@ -6,8 +6,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 export function Welcome() {
   const canvasRef = useRef(null);
 
-  // npm run dev
-
   useEffect(() => {
     const canvas = canvasRef.current;
     const scene = new THREE.Scene();
@@ -20,7 +18,7 @@ export function Welcome() {
     const renderer = new THREE.WebGLRenderer({ canvas });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.position.set(0, 2, 5); // Set a better starting position for viewing the model
+    camera.position.set(0, 2, 5);
 
     // Add directional light
     const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -31,14 +29,34 @@ export function Welcome() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    // Load GLTF model
+    // Load GLTF model and apply glass-like material
     const loader = new GLTFLoader();
     loader.load(
-      "assets/unti111tled.gltf", // Update this with the path to your .glb file
+      "assets/R2.gltf", // Update this with the path to your .glb file
       (gltf) => {
         const model = gltf.scene;
-        model.scale.set(10, 10, 10); // Adjust the scale (x, y, z)
+        model.scale.set(30, 30, 30); // Adjust the scale (x, y, z)
         model.position.set(0, 0, 0); // Adjust model position if needed
+
+        // Create a glass-like material
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff, // White color for clear plastic
+          roughness: 0.1, // Adjust for a smooth surface
+          transmission: 0.9, // High transmission for transparency
+          opacity: 0.9, // Slightly less than fully transparent
+          transparent: true, // Enable transparency
+          metalness: 0, // Non-metallic
+          clearcoat: 1, // Add a clearcoat for realism
+          clearcoatRoughness: 0.1, // Slightly rough clearcoat
+        });
+
+        // Apply material to all mesh objects in the model
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material = glassMaterial;
+          }
+        });
+
         scene.add(model);
       },
       (xhr) => {
