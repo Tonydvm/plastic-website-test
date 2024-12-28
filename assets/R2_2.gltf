@@ -3,6 +3,10 @@
 		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
+	"extensionsUsed":[
+		"KHR_materials_transmission",
+		"KHR_materials_ior"
+	],
 	"scene":0,
 	"scenes":[
 		{
@@ -32,8 +36,25 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.004",
-			"pbrMetallicRoughness":{}
+			"extensions":{
+				"KHR_materials_transmission":{
+					"transmissionFactor":1
+				},
+				"KHR_materials_ior":{
+					"ior":1.4500000476837158
+				}
+			},
+			"name":"Material.007",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.2588505148887634,
+					0.7999998927116394,
+					0.2542688846588135,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.20000000298023224
+			}
 		}
 	],
 	"meshes":[
@@ -58,14 +79,14 @@
 			"componentType":5126,
 			"count":1926,
 			"max":[
-				-7.847527503967285,
-				0.7904062867164612,
-				-9.586661338806152
+				1.6185674667358398,
+				0.3649941384792328,
+				0.9863977432250977
 			],
 			"min":[
-				-11.08627700805664,
-				-8.817461605303833e-08,
-				-11.396661758422852
+				-1.6201820373535156,
+				-0.42541223764419556,
+				-0.8236026763916016
 			],
 			"type":"VEC3"
 		},
@@ -117,7 +138,7 @@
 	"buffers":[
 		{
 			"byteLength":74724,
-			"uri":"unti111tled.bin"
+			"uri":"R2_2.bin"
 		}
 	]
 }
