@@ -12,26 +12,40 @@ export function MenuButton3D({ modelPath }) {
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-    camera.position.set(0, 0, 5);
+    camera.position.set(0, 0, 0.52);
 
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(0, 8, 10);
-    scene.add(light);
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+    // const light = new THREE.DirectionalLight(0xfcffad, 10);
+    // light.position.set(0, -0.1, -1);
+    // scene.add(light);
+
+    // const bottomLight = new THREE.DirectionalLight(0xffffff, 5);
+    // bottomLight.position.set(0, 1, -0.5);
+    // bottomLight.target.position.set(0, 0, 0);
+    // scene.add(bottomLight);
+    // scene.add(bottomLight.target);
+
+    // const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // scene.add(ambientLight);
 
     let model;
     let mouseX = 0;
     let mouseY = 0;
     let animatingToMouse = false;
-    let isMouseInside = false; 
+    let isMouseInside = false;
+
+    const textureLoader = new THREE.TextureLoader();
+
+    // Load the texture maps
+    const normalMap = textureLoader.load("assets/textures/DriBlast/Poliigon_PlasticMoldDryBlast_7495_Normal.png"); 
+    const displacementMap = textureLoader.load("assets/textures/DriBlast/Poliigon_PlasticMoldDryBlast_7495_Displacement.tiff"); 
+    const roughnessMap = textureLoader.load("assets/textures/DriBlast/Poliigon_PlasticMoldDryBlast_7495_Roughness.jpg"); 
 
     const hdrLoader = new RGBELoader();
     hdrLoader.load(
-      "assets/empty_warehouse_01_4k.hdr", // Ensure this path is correct
+      "assets/empty_warehouse_01_4k.hdr", 
       (hdrEquirect) => {
         hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
-        scene.environment = hdrEquirect; // Set the scene's environment
+        scene.environment = hdrEquirect; 
 
         // Load the 3D model
         const loader = new GLTFLoader();
@@ -45,27 +59,29 @@ export function MenuButton3D({ modelPath }) {
 
             model.position.sub(center);
             const maxAxis = Math.max(size.x, size.y, size.z);
-            model.scale.setScalar(1 / maxAxis + 200); // Keep scaling reasonable
+            model.scale.setScalar(1 / maxAxis); // Keep scaling reasonable
 
-            // Apply material with environment map
-            const plasticMaterial = new THREE.MeshPhysicalMaterial({
-                metalness: 0, // Non-metallic surface
-                roughness: 0.7, // High roughness for diffused reflections
-                transmission: 1, // Fully transparent
-                thickness: 0.5, // Adds depth and refraction
-                ior: 1.4, // Adjust for realistic plastic refraction
-                color: 0x11d957, // Green tint
-                opacity: 0.9, // High transparency
-                transparent: true, // Enables blending
-                envMap: hdrEquirect, // Reflection map for lighting
-                envMapIntensity: 5, // Increase intensity for stronger reflections
-                clearcoat: 0.5, // Subtle clearcoat for sheen
-                clearcoatRoughness: 1, // Rough clearcoat for scattered highlights
+            // Apply material with texture maps
+            const advancedMaterial = new THREE.MeshPhysicalMaterial({
+              metalness: 0,
+              roughness: 0.8,
+              transmission: 1,
+              thickness: 0.4,
+              ior: 1.6,
+              color: 0x11d957,
+              opacity: 1,
+              transparent: true,
+              envMap: hdrEquirect,
+              envMapIntensity: 1,
+              normalMap: normalMap, // Apply normal map
+              displacementMap: displacementMap, // Apply displacement map
+              displacementScale: 0.05, // Scale for displacement
+              roughnessMap: roughnessMap, // Apply roughness map
             });
 
             model.traverse((child) => {
               if (child.isMesh) {
-                child.material = plasticMaterial;
+                child.material = advancedMaterial;
               }
             });
 
@@ -92,13 +108,11 @@ export function MenuButton3D({ modelPath }) {
       mouseY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
     };
 
-    // Mouse enter effect
     const onMouseEnter = () => {
       if (!model) return;
       isMouseInside = true;
     };
 
-    // Mouse leave effect
     const onMouseLeave = () => {
       if (!model) return;
 
@@ -107,7 +121,7 @@ export function MenuButton3D({ modelPath }) {
       const currentRotation = { x: model.rotation.x, y: model.rotation.y };
       const targetRotation = { x: 0, y: 0 };
 
-      const duration = 0.5; 
+      const duration = 0.5;
       const start = performance.now();
 
       const animateLeave = (timestamp) => {
@@ -143,18 +157,15 @@ export function MenuButton3D({ modelPath }) {
 
     animate();
 
-    // Handle cleanup and resizing
     const handleResize = () => {
-        const width = canvas.clientWidth; // Updated width
-        const height = canvas.clientHeight; // Updated height
-        renderer.setSize(width, height);
-        camera.aspect = width / height; // Adjust aspect ratio
-        camera.updateProjectionMatrix(); // Update the camera matrix
-      };
-      
-      // Call handleResize immediately to set correct aspect ratio for new dimensions
-      handleResize();
+      const width = canvas.clientWidth; // Updated width
+      const height = canvas.clientHeight; // Updated height
+      renderer.setSize(width, height);
+      camera.aspect = width / height; // Adjust aspect ratio
+      camera.updateProjectionMatrix(); // Update the camera matrix
+    };
 
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -168,7 +179,7 @@ export function MenuButton3D({ modelPath }) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ width: "200px", height: "150px" }} // Wider canvas dimensions
+      style={{ width: "200px", height: "120px" }}
     />
   );
 }
