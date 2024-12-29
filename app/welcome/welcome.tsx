@@ -6,29 +6,33 @@ export function Welcome() {
     <div style={{ fontFamily: "Arial, sans-serif", margin: 0, padding: 0 }}>
       <header
         style={{
-          backgroundColor: "#333",
-          color: "#fff",
+          backgroundColor: "white",
           padding: "10px 20px",
           display: "flex",
           alignItems: "center",
         }}
       >
-        <h1 style={{ margin: 0, fontSize: "24px" }}>3D Menu Example</h1>
+
       </header>
       <nav
         style={{
           display: "flex",
-          justifyContent: "center",
-          backgroundColor: "#444",
-          padding: "10px 0",
+          justifyContent: "leftAlign",
+          backgroundColor: "white",
+          padding: "1rem",
         }}
       >
-        <MenuButton3D modelPath="assets/R2_2.gltf" /> {/* Use the imported component */}
+        <MenuButton3D modelPath="assets/R2_2.gltf" /> 
+        <MenuButton3D modelPath="assets/R2_2.gltf" /> 
+        <MenuButton3D modelPath="assets/R2_2.gltf" /> 
       </nav>
       <main
         style={{
           padding: "20px",
           textAlign: "center",
+          backgroundColor: "#f4f4f4",
+          color: "#333",
+          height: "calc(100vh - 100px)",
         }}
       >
         <h2>Welcome to the 3D Menu Webpage</h2>
